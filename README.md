@@ -14,26 +14,46 @@
 
 - DeepSeek Harness **Desktop 0.2.2-rc.5**（本仓库只在该版本上验证过；更新的版本通常可用，但插槽与 Remote 契约变动时不保证）。
 - 该机器上已经配置好至少一个模型 provider（插件会用它发一次改写请求）。
-- 能访问 `github.com`，用于克隆仓库。
+- 能访问 `github.com`（方式 A 需要；网络不通就用方式 B 把文件带过去）。
 
-### 步骤
+### 方式 A：直接装 GitHub 仓库（最快）
 
-1. 克隆仓库到任意目录，例如：
+DSH 的 **添加插件** 输入框接受「npm 包名 / GitHub 仓库地址 / 本地绝对路径」三种写法，所以不用先克隆：
+
+1. 打开 DSH，左侧 **插件（Plugins）**
+2. 点 **添加插件（Add plugin）**
+3. 粘贴仓库地址：
+
+   ```text
+   https://github.com/Lovenndme/dsh-prompt-polish
+   ```
+
+4. 点 **安装**，等提示 **已安装**（安装期间显示「插件安装中…」）
+5. **重启一次 DSH**（Host 半在启动时加载；只刷新页面不加载 Host 侧代码）
+6. 打开任意会话：输入框右侧、模型选择器左边出现 **润色** 按钮
+
+### 方式 B：下载后装本地目录（离线 / 方式 A 失败时）
+
+1. 取得目录，二选一：
 
    ```sh
    git clone https://github.com/Lovenndme/dsh-prompt-polish.git ~/dsh-plugins/dsh-prompt-polish
    ```
 
-2. 安装这个本地目录，二选一：
+   或在 GitHub 页面点 **Code → Download ZIP**，解压到任意位置。
 
-   - **界面**：打开 DSH → 左侧 **插件（Plugins）** → **添加插件（Add plugin）** → 选择第 1 步克隆出来的目录（也就是含 `package.json` 的那一层，`~/dsh-plugins/dsh-prompt-polish`）。
-   - **对话**：在 DSH 里对 agent 说「安装本地插件目录 `~/dsh-plugins/dsh-prompt-polish`」，它用 `plugin_manager` 的 `install_bundle` 安装同一个目录。
+2. **插件 → 添加插件** → 粘贴该目录的**绝对路径**（必须是直接含 `package.json` 的那一层，例如 `/Users/<用户名>/dsh-plugins/dsh-prompt-polish`）。
+3. 同样 **重启一次 DSH**。
 
-   安装结果里应看到 `application: applied`，插件列表中应出现 **提示词润色 / Prompt polish**，且处于启用状态。
+### 方式 C：让 agent 装
 
-3. **重启一次 DSH**（Host 半在启动时加载；只刷新页面不加载 Host 侧代码），然后重新打开页面。
+对那台机器上的 DSH 说一句即可：
 
-4. 打开任意会话：输入框右侧、模型选择器左边应出现「润色」按钮。若没有，见下方「排障」。
+> 安装插件 `https://github.com/Lovenndme/dsh-prompt-polish`
+
+agent 会用 `plugin_manager` 的 `install_bundle` 做同样的事（本地目录同理），装完仍要重启 DSH。
+
+安装成功的标志：插件列表里出现 **提示词润色 / Prompt polish** 且处于启用状态；重启后会话里出现「润色」按钮。若没有，见下方「排障」。
 
 ## 使用
 
@@ -55,8 +75,9 @@
 
 ## 更新与卸载
 
-- 更新：`git -C ~/dsh-plugins/dsh-prompt-polish pull`，然后在 **插件** 页重新加载/重启 DSH。
-- 卸载：**插件** 页移除该插件（或让 agent 用 `plugin_manager` 的 `remove_bundle`），再重启 DSH。
+- 更新（方式 A 装的）：插件页卸载，再用 **添加插件** 重新粘贴地址。Git 安装按当时 `main` 的最新提交打包；要固定版本就在地址后加 `#<提交号>`，例如 `https://github.com/Lovenndme/dsh-prompt-polish#333bf17`。Git 安装的包不会出现在「可更新版本」列表里，需要手动重装。
+- 更新（方式 B 装的）：`git -C ~/dsh-plugins/dsh-prompt-polish pull`，然后重启 DSH。
+- 卸载：插件页移除该插件（或让 agent 用 `plugin_manager` 的 `remove_bundle`），再重启 DSH。
 
 ## 目录结构
 
@@ -77,7 +98,8 @@
 
 ## 排障
 
-- **插件列表里没有**：确认选中的目录里直接有 `package.json`，且 `package.json` 含 `dsh.bundle.patch`。
+- **插件列表里没有**：方式 A 要确认地址指向仓库根目录（那里直接有 `package.json` 并含 `dsh.bundle.patch`）；方式 B 要确认贴的是绝对路径、且该目录里直接有 `package.json`，不是它的上一层。
+- **安装报「该插件已安装」**：先在插件页卸载旧版本再装。
 - **有插件但没有按钮**：重启 DSH 后刷新页面；仍有问题看开发者工具 Console 是否有 `slot entry crashed` 类报错。
 - **点按钮没反应 / 一直「润色中」**：多为模型路由不可用（会话未选模型或 provider 未配置）。悬停看提示，或先正常发一条消息确认模型可用。
 
