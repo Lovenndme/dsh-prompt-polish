@@ -1,0 +1,15 @@
+# Local and build artifacts that must never be committed.
+node_modules/
+.DS_Store
+.DS_Store?
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+.env
+.env.*
+*.pem
+*.key
+*.p12
+.dsh/
+coverage/

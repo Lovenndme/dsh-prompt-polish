@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Prompt polish",
+    "description": "Adds a Polish control to the right of the composer tool row, just before the model selector. After writing a draft, press it to rewrite the draft into a ready-to-run DSH prompt with the session's provider and model, then replace the whole draft with the result. It only rewrites text: no message is sent and no row appears in the conversation. Each press makes one extra model request on the session's route, with the model's default reasoning effort; the command lifecycle and the rewrite are recorded in the session log but are not displayed in the conversation. The draft is left untouched when it is empty, a message is being sent, it changed during the rewrite, it exceeds 24000 characters, or the request fails, and the control shows that state. The same operation is registered as the /polish command. Turning the plugin off or uninstalling it removes the control and the command and keeps no settings."
+  }
+}
